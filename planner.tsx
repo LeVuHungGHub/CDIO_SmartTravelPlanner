@@ -8,8 +8,6 @@ import {
   Home, Plane, Calendar, Wallet, User, Bell, CheckCircle2, 
   List, Map, Plus, Download, FileText, Hotel 
 } from 'lucide-react-native';
-
-// Tính toán chiều cao thanh trạng thái
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0;
 
 export default function PlannerScreen() {
