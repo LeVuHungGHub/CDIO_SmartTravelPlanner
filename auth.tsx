@@ -9,41 +9,24 @@ import { Smile } from 'lucide-react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import * as AuthSession from 'expo-auth-session';
-
-// Quan trọng: Phải có dòng này để trình duyệt đóng lại sau khi auth xong
 WebBrowser.maybeCompleteAuthSession();
-
 const { width } = Dimensions.get('window');
-
-
 const BACKEND_URL = 'http://192.168.1.201:3000'; 
-
 export default function AuthScreen({ hideHeader = false }: { hideHeader?: boolean }) {
   const router = useRouter();
-
-  // Cấu hình Google Auth mới
   const [request, response, promptAsync] = Google.useAuthRequest({
-    // Sử dụng ID phù hợp cho từng nền tảng Nhi đã tạo trên Google Console
     webClientId: "385744266977-hhbgmif37vs73f5pfrp3v6ifi0v7319i.apps.googleusercontent.com",
     androidClientId: "385744266977-jr0e107b9f3r3fp0ttv20ffodq399rgo.apps.googleusercontent.com",
     iosClientId: "385744266977-dfmdjo8o9ij8a60fivh1k17lti6d1vrc.apps.googleusercontent.com",
-    
-    // Sử dụng scheme đã khai báo trong app.json
-    redirectUri: 'https://auth.expo.io/@tuancuong/NovaTravel',
-    
+    redirectUri: 'https://auth.expo.io/@tuancuong/NovaTravel',  
   });
-
   useEffect(() => {
-    // Xử lý khi có phản hồi từ Google
     if (response?.type === 'success') {
       const { authentication } = response;
       if (authentication?.accessToken) {
-        console.log("Đăng nhập thành công!");
-        
-        // 1. Lấy thông tin user từ Google và lưu vào DB
+        console.log("Đăng nhập thành công!")
         fetchUserInfo(authentication.accessToken);
-        
-        // 2. Chuyển hướng ngay lập tức về trang Home
+  
         router.replace('/home'); 
       }
     } else if (response?.type === 'error') {
@@ -62,10 +45,8 @@ export default function AuthScreen({ hideHeader = false }: { hideHeader?: boolea
       console.log("Lỗi lấy thông tin Google:", error);
     }
   };
-
   const saveUserToDatabase = async (userData: any) => {
     try {
-      // Nhớ kiểm tra port (ví dụ :3000) của Backend nhé
       await fetch(`${BACKEND_URL}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,8 +60,6 @@ export default function AuthScreen({ hideHeader = false }: { hideHeader?: boolea
       console.log("Lỗi kết nối Backend:", error);
     }
   };
-
-  // --- GIỮ NGUYÊN TOÀN BỘ GIAO DIỆN CỦA NHI ---
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
@@ -93,12 +72,10 @@ export default function AuthScreen({ hideHeader = false }: { hideHeader?: boolea
             <Text style={styles.authSubTitle}>Your Personal Digital Concierge</Text>
           </View>
         ) : <View style={styles.headerPlaceholder} />}
-
         <View style={styles.imageCardContainer}>
           <Image source={require('../assets/images/ai-genius.png')} style={styles.geniusImage} resizeMode="cover" />
           <View style={styles.aiBadge}><Text style={styles.aiBadgeText}>AI GENIUS</Text></View>
         </View>
-
         <View style={styles.textSection}>
           <Text style={styles.featureTitle}>Intelligent Itineraries</Text>
           <Text style={styles.featureDesc}>
@@ -140,7 +117,6 @@ export default function AuthScreen({ hideHeader = false }: { hideHeader?: boolea
             </View>
           </TouchableOpacity>
         </View>
-
         <View style={styles.footerSection}>
           <Text style={styles.footerText}>
             Don't have an account? <Text style={styles.linkText} onPress={() => router.push('/register')}>Create Account</Text>
@@ -150,8 +126,6 @@ export default function AuthScreen({ hideHeader = false }: { hideHeader?: boolea
     </SafeAreaView>
   );
 }
-
-// --- GIỮ NGUYÊN TOÀN BỘ STYLES CỦA NHI ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF', paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0 },
   scrollContent: { alignItems: 'center', paddingHorizontal: 25, paddingBottom: 40, paddingTop: 20 },
